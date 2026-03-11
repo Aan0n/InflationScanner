@@ -92,21 +92,7 @@
                         <label for="originCountry">Land van herkomst</label>
                         <select id="originCountry">
                             <option value="">Selecteer...</option>
-                            <option value="NL">Nederland</option>
-                            <option value="BE">België</option>
-                            <option value="DE">Duitsland</option>
-                            <option value="FR">Frankrijk</option>
-                            <option value="GB">Verenigd Koninkrijk</option>
-                            <option value="US">Verenigde Staten</option>
-                            <option value="CA">Canada</option>
-                            <option value="IN">India</option>
-                            <option value="JP">Japan</option>
-                            <option value="CN">China</option>
-                            <option value="BR">Brazilië</option>
-                            <option value="AU">Australië</option>
-                            <option value="TR">Turkije</option>
-                            <option value="ID">Indonesië</option>
-                            <option value="MX">Mexico</option>
+                            <!-- Wordt dynamisch gevuld door app.js -->
                         </select>
                     </div>
                 </div>
@@ -119,21 +105,7 @@
                         <label for="storeCountry">Land van winkel</label>
                         <select id="storeCountry">
                             <option value="">Selecteer...</option>
-                            <option value="NL">Nederland</option>
-                            <option value="BE">België</option>
-                            <option value="DE">Duitsland</option>
-                            <option value="FR">Frankrijk</option>
-                            <option value="GB">Verenigd Koninkrijk</option>
-                            <option value="US">Verenigde Staten</option>
-                            <option value="CA">Canada</option>
-                            <option value="IN">India</option>
-                            <option value="JP">Japan</option>
-                            <option value="CN">China</option>
-                            <option value="BR">Brazilië</option>
-                            <option value="AU">Australië</option>
-                            <option value="TR">Turkije</option>
-                            <option value="ID">Indonesië</option>
-                            <option value="MX">Mexico</option>
+                            <!-- Wordt dynamisch gevuld door app.js -->
                         </select>
                     </div>
                 </div>
@@ -145,20 +117,92 @@
                     <div class="form-group">
                         <label for="priceCurrency">Valuta</label>
                         <select id="priceCurrency">
-                            <option value="EUR">EUR - Euro (€)</option>
-                            <option value="USD">USD - US Dollar ($)</option>
-                            <option value="GBP">GBP - Brits Pond (£)</option>
-                            <option value="CAD">CAD - Canadese Dollar (C$)</option>
-                            <option value="INR">INR - Indiase Roepie (₹)</option>
-                            <option value="JPY">JPY - Japanse Yen (¥)</option>
-                            <option value="CNY">CNY - Chinese Yuan (¥)</option>
-                            <option value="BRL">BRL - Braziliaanse Real (R$)</option>
-                            <option value="AUD">AUD - Australische Dollar (A$)</option>
-                            <option value="TRY">TRY - Turkse Lira (₺)</option>
-                            <option value="IDR">IDR - Indonesische Rupiah (Rp)</option>
-                            <option value="MXN">MXN - Mexicaanse Peso ($)</option>
-                            <option value="CHF">CHF - Zwitserse Frank (Fr)</option>
-                            <option value="SEK">SEK - Zweedse Kroon (kr)</option>
+                            <optgroup label="Meest gebruikt">
+                                <option value="EUR">EUR - Euro (€)</option>
+                                <option value="USD">USD - US Dollar ($)</option>
+                                <option value="GBP">GBP - Brits Pond (£)</option>
+                            </optgroup>
+                            <optgroup label="Amerika">
+                                <option value="ARS">ARS - Argentijnse Peso</option>
+                                <option value="BOB">BOB - Boliviaanse Boliviano</option>
+                                <option value="BRL">BRL - Braziliaanse Real (R$)</option>
+                                <option value="CAD">CAD - Canadese Dollar (C$)</option>
+                                <option value="CLP">CLP - Chileense Peso</option>
+                                <option value="COP">COP - Colombiaanse Peso</option>
+                                <option value="CRC">CRC - Costa Ricaanse Colón (₡)</option>
+                                <option value="DOP">DOP - Dominicaanse Peso</option>
+                                <option value="GTQ">GTQ - Guatemalteekse Quetzal</option>
+                                <option value="HNL">HNL - Hondurese Lempira</option>
+                                <option value="JMD">JMD - Jamaicaanse Dollar</option>
+                                <option value="MXN">MXN - Mexicaanse Peso (MX$)</option>
+                                <option value="NIO">NIO - Nicaraguaanse Córdoba</option>
+                                <option value="PAB">PAB - Panamese Balboa</option>
+                                <option value="PEN">PEN - Peruaanse Sol (S/.)</option>
+                                <option value="PYG">PYG - Paraguayaanse Guaraní (₲)</option>
+                                <option value="TTD">TTD - Trinidad en Tobago Dollar</option>
+                                <option value="UYU">UYU - Uruguayaanse Peso</option>
+                                <option value="VES">VES - Venezolaanse Bolívar</option>
+                            </optgroup>
+                            <optgroup label="Europa">
+                                <option value="BGN">BGN - Bulgaarse Lev</option>
+                                <option value="CHF">CHF - Zwitserse Frank (Fr)</option>
+                                <option value="CZK">CZK - Tsjechische Kroon (Kč)</option>
+                                <option value="DKK">DKK - Deense Kroon (kr)</option>
+                                <option value="GEL">GEL - Georgische Lari (₾)</option>
+                                <option value="HUF">HUF - Hongaarse Forint (Ft)</option>
+                                <option value="ISK">ISK - IJslandse Kroon</option>
+                                <option value="NOK">NOK - Noorse Kroon (kr)</option>
+                                <option value="PLN">PLN - Poolse Zloty (zł)</option>
+                                <option value="RON">RON - Roemeense Leu</option>
+                                <option value="RUB">RUB - Russische Roebel (₽)</option>
+                                <option value="SEK">SEK - Zweedse Kroon (kr)</option>
+                                <option value="UAH">UAH - Oekraïense Grivna (₴)</option>
+                            </optgroup>
+                            <optgroup label="Azië & Oceanië">
+                                <option value="AUD">AUD - Australische Dollar (A$)</option>
+                                <option value="BDT">BDT - Bengalese Taka (৳)</option>
+                                <option value="CNY">CNY - Chinese Yuan (¥)</option>
+                                <option value="HKD">HKD - Hongkongse Dollar</option>
+                                <option value="IDR">IDR - Indonesische Rupiah (Rp)</option>
+                                <option value="INR">INR - Indiase Roepie (₹)</option>
+                                <option value="JPY">JPY - Japanse Yen (¥)</option>
+                                <option value="KRW">KRW - Zuid-Koreaanse Won (₩)</option>
+                                <option value="LKR">LKR - Sri Lankaanse Roepie</option>
+                                <option value="MYR">MYR - Maleisische Ringgit (RM)</option>
+                                <option value="NZD">NZD - Nieuw-Zeelandse Dollar (NZ$)</option>
+                                <option value="PHP">PHP - Filipijnse Peso (₱)</option>
+                                <option value="PKR">PKR - Pakistaanse Roepie (₨)</option>
+                                <option value="SGD">SGD - Singaporese Dollar (S$)</option>
+                                <option value="THB">THB - Thaise Baht (฿)</option>
+                                <option value="TWD">TWD - Taiwanese Dollar (NT$)</option>
+                                <option value="VND">VND - Vietnamese Dong (₫)</option>
+                            </optgroup>
+                            <optgroup label="Midden-Oosten">
+                                <option value="AED">AED - VAE Dirham (د.إ)</option>
+                                <option value="BHD">BHD - Bahreinse Dinar</option>
+                                <option value="EGP">EGP - Egyptisch Pond (E£)</option>
+                                <option value="ILS">ILS - Israëlische Sjekel (₪)</option>
+                                <option value="IQD">IQD - Iraakse Dinar</option>
+                                <option value="IRR">IRR - Iraanse Rial</option>
+                                <option value="JOD">JOD - Jordaanse Dinar</option>
+                                <option value="KWD">KWD - Koeweitse Dinar</option>
+                                <option value="LBP">LBP - Libanees Pond</option>
+                                <option value="OMR">OMR - Omaanse Rial</option>
+                                <option value="QAR">QAR - Qatarese Rial</option>
+                                <option value="SAR">SAR - Saoedische Riyal (﷼)</option>
+                                <option value="TRY">TRY - Turkse Lira (₺)</option>
+                            </optgroup>
+                            <optgroup label="Afrika">
+                                <option value="DZD">DZD - Algerijnse Dinar</option>
+                                <option value="GHS">GHS - Ghanese Cedi (GH₵)</option>
+                                <option value="KES">KES - Keniaanse Shilling (KSh)</option>
+                                <option value="MAD">MAD - Marokkaanse Dirham</option>
+                                <option value="NGN">NGN - Nigeriaanse Naira (₦)</option>
+                                <option value="TND">TND - Tunesische Dinar</option>
+                                <option value="XAF">XAF - CFA Franc (Centraal)</option>
+                                <option value="XOF">XOF - CFA Franc (West)</option>
+                                <option value="ZAR">ZAR - Zuid-Afrikaanse Rand (R)</option>
+                            </optgroup>
                         </select>
                     </div>
                 </div>
