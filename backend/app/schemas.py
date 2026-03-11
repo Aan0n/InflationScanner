@@ -1,0 +1,88 @@
+"""Pydantic schemas voor API request/response validatie."""
+
+from datetime import datetime
+
+from pydantic import BaseModel
+
+
+# --- Product schemas ---
+
+
+class ProductCreate(BaseModel):
+    name: str
+    barcode: str | None = None
+    category: str | None = None
+    brand: str | None = None
+    description: str | None = None
+
+
+class ProductResponse(BaseModel):
+    id: int
+    name: str
+    barcode: str | None
+    category: str | None
+    brand: str | None
+    description: str | None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+# --- Store schemas ---
+
+
+class StoreCreate(BaseModel):
+    name: str
+    location: str | None = None
+    chain: str | None = None
+
+
+class StoreResponse(BaseModel):
+    id: int
+    name: str
+    location: str | None
+    chain: str | None
+
+    model_config = {"from_attributes": True}
+
+
+# --- PriceEntry schemas ---
+
+
+class PriceEntryCreate(BaseModel):
+    product_id: int
+    store_id: int | None = None
+    price: float
+    currency: str = "EUR"
+    source: str = "manual"
+    recorded_at: datetime | None = None
+
+
+class PriceEntryResponse(BaseModel):
+    id: int
+    product_id: int
+    store_id: int | None
+    price: float
+    currency: str
+    recorded_at: datetime
+    source: str
+
+    model_config = {"from_attributes": True}
+
+
+# --- Prijsgeschiedenis ---
+
+
+class PriceHistoryPoint(BaseModel):
+    price: float
+    recorded_at: datetime
+    store_name: str | None = None
+    source: str
+
+
+class PriceHistoryResponse(BaseModel):
+    product: ProductResponse
+    current_price: float | None
+    oldest_price: float | None
+    price_change_percent: float | None
+    history: list[PriceHistoryPoint]

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InflationScanner - Bekijk prijsontwikkeling</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Chart.js voor prijsgrafieken -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <!-- QuaggaJS voor barcode scannen -->
+    <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2@1.8.4/dist/quagga.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>🔍 InflationScanner</h1>
+        <p class="subtitle">Bekijk hoe productprijzen veranderen over tijd</p>
+    </header>
+
+    <main>
+        <!-- Zoek- en scansectie -->
+        <section class="search-section">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Zoek product op naam of barcode...">
+                <button id="searchBtn">Zoeken</button>
+                <button id="scanBtn" class="scan-btn">📷 Scan barcode</button>
+            </div>
+
+            <!-- Barcode scanner (verborgen tot activatie) -->
+            <div id="scannerContainer" class="scanner-container hidden">
+                <div id="scanner"></div>
+                <button id="closeScannerBtn" class="close-btn">Sluiten</button>
+            </div>
+
+            <!-- Zoekresultaten -->
+            <div id="searchResults" class="search-results"></div>
+        </section>
+
+        <!-- Prijsgeschiedenis sectie -->
+        <section id="priceHistorySection" class="price-history hidden">
+            <h2 id="productTitle"></h2>
+            <div class="price-summary">
+                <div class="price-card">
+                    <span class="label">Huidige prijs</span>
+                    <span id="currentPrice" class="price"></span>
+                </div>
+                <div class="price-card">
+                    <span class="label">Oudste prijs</span>
+                    <span id="oldestPrice" class="price"></span>
+                </div>
+                <div class="price-card">
+                    <span id="changeLabel" class="label">Verandering</span>
+                    <span id="priceChange" class="price change"></span>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="priceChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Prijs toevoegen -->
+        <section class="add-price-section">
+            <h2>Prijs toevoegen</h2>
+            <form id="addPriceForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productName">Productnaam *</label>
+                        <input type="text" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productBarcode">Barcode</label>
+                        <input type="text" id="productBarcode">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productCategory">Categorie</label>
+                        <select id="productCategory">
+                            <option value="">Selecteer...</option>
+                            <option value="voeding">Voeding</option>
+                            <option value="dranken">Dranken</option>
+                            <option value="zuivel">Zuivel</option>
+                            <option value="brood">Brood & Gebak</option>
+                            <option value="vlees">Vlees & Vis</option>
+                            <option value="groente">Groente & Fruit</option>
+                            <option value="huishouden">Huishouden</option>
+                            <option value="verzorging">Verzorging</option>
+                            <option value="horeca">Horeca</option>
+                            <option value="overig">Overig</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="storeName">Winkel</label>
+                        <input type="text" id="storeName" placeholder="bijv. Albert Heijn">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productPrice">Prijs (€) *</label>
+                        <input type="number" id="productPrice" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="priceDate">Datum</label>
+                        <input type="date" id="priceDate">
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn">Prijs opslaan</button>
+            </form>
+            <div id="formMessage" class="form-message hidden"></div>
+        </section>
+
+        <!-- Top inflatie producten -->
+        <section class="top-inflation">
+            <h2>Grootste prijsstijgingen</h2>
+            <div id="topInflation" class="inflation-list">
+                <p class="empty-state">Voeg prijzen toe om de grootste stijgingen te zien.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>InflationScanner &mdash; Samen bouwen we aan prijstransparantie</p>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
