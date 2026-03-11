@@ -14,6 +14,7 @@ class ProductCreate(BaseModel):
     category: str | None = None
     brand: str | None = None
     description: str | None = None
+    origin_country: str | None = None  # ISO 3166-1 alpha-2, bijv. "NL", "US"
 
 
 class ProductResponse(BaseModel):
@@ -23,6 +24,7 @@ class ProductResponse(BaseModel):
     category: str | None
     brand: str | None
     description: str | None
+    origin_country: str | None
     created_at: datetime
 
     model_config = {"from_attributes": True}
@@ -35,6 +37,7 @@ class StoreCreate(BaseModel):
     name: str
     location: str | None = None
     chain: str | None = None
+    country_code: str | None = None  # ISO 3166-1 alpha-2, bijv. "NL", "CA"
 
 
 class StoreResponse(BaseModel):
@@ -42,6 +45,7 @@ class StoreResponse(BaseModel):
     name: str
     location: str | None
     chain: str | None
+    country_code: str | None
 
     model_config = {"from_attributes": True}
 
@@ -75,13 +79,16 @@ class PriceEntryResponse(BaseModel):
 
 class PriceHistoryPoint(BaseModel):
     price: float
+    currency: str
     recorded_at: datetime
     store_name: str | None = None
+    country_code: str | None = None
     source: str
 
 
 class PriceHistoryResponse(BaseModel):
     product: ProductResponse
+    currency: str
     current_price: float | None
     oldest_price: float | None
     price_change_percent: float | None

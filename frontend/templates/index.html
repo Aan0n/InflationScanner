@@ -89,19 +89,85 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="storeName">Winkel</label>
-                        <input type="text" id="storeName" placeholder="bijv. Albert Heijn">
+                        <label for="originCountry">Land van herkomst</label>
+                        <select id="originCountry">
+                            <option value="">Selecteer...</option>
+                            <option value="NL">Nederland</option>
+                            <option value="BE">België</option>
+                            <option value="DE">Duitsland</option>
+                            <option value="FR">Frankrijk</option>
+                            <option value="GB">Verenigd Koninkrijk</option>
+                            <option value="US">Verenigde Staten</option>
+                            <option value="CA">Canada</option>
+                            <option value="IN">India</option>
+                            <option value="JP">Japan</option>
+                            <option value="CN">China</option>
+                            <option value="BR">Brazilië</option>
+                            <option value="AU">Australië</option>
+                            <option value="TR">Turkije</option>
+                            <option value="ID">Indonesië</option>
+                            <option value="MX">Mexico</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="productPrice">Prijs (€) *</label>
+                        <label for="storeName">Winkel</label>
+                        <input type="text" id="storeName" placeholder="bijv. Albert Heijn">
+                    </div>
+                    <div class="form-group">
+                        <label for="storeCountry">Land van winkel</label>
+                        <select id="storeCountry">
+                            <option value="">Selecteer...</option>
+                            <option value="NL">Nederland</option>
+                            <option value="BE">België</option>
+                            <option value="DE">Duitsland</option>
+                            <option value="FR">Frankrijk</option>
+                            <option value="GB">Verenigd Koninkrijk</option>
+                            <option value="US">Verenigde Staten</option>
+                            <option value="CA">Canada</option>
+                            <option value="IN">India</option>
+                            <option value="JP">Japan</option>
+                            <option value="CN">China</option>
+                            <option value="BR">Brazilië</option>
+                            <option value="AU">Australië</option>
+                            <option value="TR">Turkije</option>
+                            <option value="ID">Indonesië</option>
+                            <option value="MX">Mexico</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productPrice">Prijs *</label>
                         <input type="number" id="productPrice" step="0.01" min="0" required>
                     </div>
+                    <div class="form-group">
+                        <label for="priceCurrency">Valuta</label>
+                        <select id="priceCurrency">
+                            <option value="EUR">EUR - Euro (€)</option>
+                            <option value="USD">USD - US Dollar ($)</option>
+                            <option value="GBP">GBP - Brits Pond (£)</option>
+                            <option value="CAD">CAD - Canadese Dollar (C$)</option>
+                            <option value="INR">INR - Indiase Roepie (₹)</option>
+                            <option value="JPY">JPY - Japanse Yen (¥)</option>
+                            <option value="CNY">CNY - Chinese Yuan (¥)</option>
+                            <option value="BRL">BRL - Braziliaanse Real (R$)</option>
+                            <option value="AUD">AUD - Australische Dollar (A$)</option>
+                            <option value="TRY">TRY - Turkse Lira (₺)</option>
+                            <option value="IDR">IDR - Indonesische Rupiah (Rp)</option>
+                            <option value="MXN">MXN - Mexicaanse Peso ($)</option>
+                            <option value="CHF">CHF - Zwitserse Frank (Fr)</option>
+                            <option value="SEK">SEK - Zweedse Kroon (kr)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
                     <div class="form-group">
                         <label for="priceDate">Datum</label>
                         <input type="date" id="priceDate">
                     </div>
+                    <div class="form-group"></div>
                 </div>
                 <button type="submit" class="submit-btn">Prijs opslaan</button>
             </form>

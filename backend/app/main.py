@@ -79,6 +79,7 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
 def list_products(
     search: str | None = Query(None, description="Zoek op naam of barcode"),
     category: str | None = None,
+    country: str | None = Query(None, description="Filter op land van herkomst (ISO 3166-1 alpha-2)"),
     db: Session = Depends(get_db),
 ):
     """Zoek producten."""
@@ -89,6 +90,8 @@ def list_products(
         )
     if category:
         query = query.filter(Product.category == category)
+    if country:
+        query = query.filter(Product.origin_country == country.upper())
     return query.order_by(Product.name).limit(50).all()
 
 
@@ -126,9 +129,15 @@ def create_store(store: StoreCreate, db: Session = Depends(get_db)):
 
 
 @app.get("/api/stores", response_model=list[StoreResponse])
-def list_stores(db: Session = Depends(get_db)):
+def list_stores(
+    country: str | None = Query(None, description="Filter op land (ISO 3166-1 alpha-2)"),
+    db: Session = Depends(get_db),
+):
     """Lijst van alle winkels."""
-    return db.query(Store).order_by(Store.name).all()
+    query = db.query(Store)
+    if country:
+        query = query.filter(Store.country_code == country.upper())
+    return query.order_by(Store.name).all()
 
 
 # --- PriceEntry endpoints ---
@@ -153,30 +162,48 @@ def add_price(entry: PriceEntryCreate, db: Session = Depends(get_db)):
 
 
 @app.get("/api/prices/{product_id}/history", response_model=PriceHistoryResponse)
-def get_price_history(product_id: int, db: Session = Depends(get_db)):
+def get_price_history(
+    product_id: int,
+    currency: str | None = Query(None, description="Filter op valuta (bijv. EUR, USD, CAD)"),
+    db: Session = Depends(get_db),
+):
     """Bekijk de volledige prijsgeschiedenis van een product."""
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(status_code=404, detail="Product niet gevonden")
 
-    entries = (
+    query = (
         db.query(PriceEntry)
         .filter(PriceEntry.product_id == product_id)
-        .order_by(PriceEntry.recorded_at.asc())
-        .all()
     )
+    if currency:
+        query = query.filter(PriceEntry.currency == currency.upper())
+    entries = query.order_by(PriceEntry.recorded_at.asc()).all()
+
+    # Bepaal de meest voorkomende valuta in de resultaten
+    result_currency = "EUR"
+    if entries:
+        currencies = {}
+        for e in entries:
+            currencies[e.currency] = currencies.get(e.currency, 0) + 1
+        result_currency = max(currencies, key=currencies.get)
 
     history = []
     for entry in entries:
         store_name = None
+        country_code = None
         if entry.store_id:
             store = db.query(Store).filter(Store.id == entry.store_id).first()
-            store_name = store.name if store else None
+            if store:
+                store_name = store.name
+                country_code = store.country_code
         history.append(
             PriceHistoryPoint(
                 price=entry.price,
+                currency=entry.currency,
                 recorded_at=entry.recorded_at,
                 store_name=store_name,
+                country_code=country_code,
                 source=entry.source,
             )
         )
@@ -189,6 +216,7 @@ def get_price_history(product_id: int, db: Session = Depends(get_db)):
 
     return PriceHistoryResponse(
         product=product,
+        currency=result_currency,
         current_price=current_price,
         oldest_price=oldest_price,
         price_change_percent=price_change,
@@ -197,21 +225,28 @@ def get_price_history(product_id: int, db: Session = Depends(get_db)):
 
 
 @app.get("/api/stats/top-inflation", response_model=list[dict])
-def top_inflation_products(limit: int = 10, db: Session = Depends(get_db)):
+def top_inflation_products(
+    limit: int = 10,
+    country: str | None = Query(None, description="Filter op winkelland"),
+    currency: str | None = Query(None, description="Filter op valuta"),
+    db: Session = Depends(get_db),
+):
     """Producten met de grootste prijsstijging."""
     products = db.query(Product).all()
     results = []
 
     for product in products:
-        entries = (
-            db.query(PriceEntry)
-            .filter(PriceEntry.product_id == product.id)
-            .order_by(PriceEntry.recorded_at.asc())
-            .all()
-        )
+        query = db.query(PriceEntry).filter(PriceEntry.product_id == product.id)
+        if currency:
+            query = query.filter(PriceEntry.currency == currency.upper())
+        if country:
+            query = query.join(Store).filter(Store.country_code == country.upper())
+        entries = query.order_by(PriceEntry.recorded_at.asc()).all()
+
         if len(entries) >= 2:
             oldest = entries[0].price
             newest = entries[-1].price
+            entry_currency = entries[-1].currency
             if oldest > 0:
                 change = round(((newest - oldest) / oldest) * 100, 2)
                 results.append(
@@ -220,7 +255,9 @@ def top_inflation_products(limit: int = 10, db: Session = Depends(get_db)):
                         "product_name": product.name,
                         "oldest_price": oldest,
                         "current_price": newest,
+                        "currency": entry_currency,
                         "change_percent": change,
+                        "country": product.origin_country,
                     }
                 )
 

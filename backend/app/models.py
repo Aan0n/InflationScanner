@@ -19,6 +19,9 @@ class Product(Base):
     category: Mapped[str | None] = mapped_column(String(100), index=True)
     brand: Mapped[str | None] = mapped_column(String(100))
     description: Mapped[str | None] = mapped_column(Text)
+    origin_country: Mapped[str | None] = mapped_column(
+        String(2), index=True
+    )  # ISO 3166-1 alpha-2, bijv. "NL", "US", "IN"
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.utcnow
     )
@@ -35,6 +38,9 @@ class Store(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     location: Mapped[str | None] = mapped_column(String(255))
     chain: Mapped[str | None] = mapped_column(String(100), index=True)
+    country_code: Mapped[str | None] = mapped_column(
+        String(2), index=True
+    )  # ISO 3166-1 alpha-2, bijv. "NL", "US", "CA"
 
     prices: Mapped[list["PriceEntry"]] = relationship(back_populates="store")
 

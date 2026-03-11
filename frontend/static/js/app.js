@@ -5,6 +5,29 @@
 const API = "/api";
 let priceChart = null;
 
+// Valuta symbolen mapping
+const CURRENCY_SYMBOLS = {
+  EUR: "€", USD: "$", GBP: "£", CAD: "C$", INR: "₹",
+  JPY: "¥", CNY: "¥", BRL: "R$", AUD: "A$", TRY: "₺",
+  IDR: "Rp", MXN: "$", CHF: "Fr", SEK: "kr",
+};
+
+// Land namen mapping
+const COUNTRY_NAMES = {
+  NL: "Nederland", BE: "België", DE: "Duitsland", FR: "Frankrijk",
+  GB: "Ver. Koninkrijk", US: "Verenigde Staten", CA: "Canada",
+  IN: "India", JP: "Japan", CN: "China", BR: "Brazilië",
+  AU: "Australië", TR: "Turkije", ID: "Indonesië", MX: "Mexico",
+};
+
+function currencySymbol(code) {
+  return CURRENCY_SYMBOLS[code] || code;
+}
+
+function countryName(code) {
+  return code ? (COUNTRY_NAMES[code] || code) : "";
+}
+
 // --- Zoekfunctionaliteit ---
 
 document.getElementById("searchBtn").addEventListener("click", searchProducts);
@@ -33,6 +56,7 @@ async function searchProducts() {
       <div>
         <span class="name">${p.name}</span>
         ${p.brand ? `<span class="meta"> &mdash; ${p.brand}</span>` : ""}
+        ${p.origin_country ? `<span class="meta country-tag">${countryName(p.origin_country)}</span>` : ""}
       </div>
       <span class="meta">${p.category || ""} ${p.barcode ? `| ${p.barcode}` : ""}</span>
     </div>
@@ -50,15 +74,20 @@ async function showPriceHistory(productId) {
   const section = document.getElementById("priceHistorySection");
   section.classList.remove("hidden");
 
+  const sym = currencySymbol(data.currency);
+  const countryInfo = data.product.origin_country
+    ? ` — ${countryName(data.product.origin_country)}`
+    : "";
+
   document.getElementById("productTitle").textContent =
-    `${data.product.name}${data.product.brand ? " (" + data.product.brand + ")" : ""}`;
+    `${data.product.name}${data.product.brand ? " (" + data.product.brand + ")" : ""}${countryInfo}`;
 
   document.getElementById("currentPrice").textContent = data.current_price
-    ? `€${data.current_price.toFixed(2)}`
+    ? `${sym}${data.current_price.toFixed(2)}`
     : "-";
 
   document.getElementById("oldestPrice").textContent = data.oldest_price
-    ? `€${data.oldest_price.toFixed(2)}`
+    ? `${sym}${data.oldest_price.toFixed(2)}`
     : "-";
 
   const changeEl = document.getElementById("priceChange");
@@ -74,14 +103,15 @@ async function showPriceHistory(productId) {
   }
 
   // Grafiek tekenen
-  drawChart(data.history);
+  drawChart(data.history, data.currency);
 
   // Scroll naar de grafiek
   section.scrollIntoView({ behavior: "smooth" });
 }
 
-function drawChart(history) {
+function drawChart(history, currency) {
   const ctx = document.getElementById("priceChart").getContext("2d");
+  const sym = currencySymbol(currency);
 
   if (priceChart) {
     priceChart.destroy();
@@ -104,7 +134,7 @@ function drawChart(history) {
       labels: labels,
       datasets: [
         {
-          label: "Prijs (€)",
+          label: `Prijs (${sym})`,
           data: prices,
           borderColor: "#3498db",
           backgroundColor: "rgba(52, 152, 219, 0.1)",
@@ -123,8 +153,10 @@ function drawChart(history) {
           callbacks: {
             label: (ctx) => {
               const point = history[ctx.dataIndex];
-              let label = `€${ctx.parsed.y.toFixed(2)}`;
+              const pointSym = currencySymbol(point.currency);
+              let label = `${pointSym}${ctx.parsed.y.toFixed(2)}`;
               if (point.store_name) label += ` (${point.store_name})`;
+              if (point.country_code) label += ` [${countryName(point.country_code)}]`;
               return label;
             },
           },
@@ -134,7 +166,7 @@ function drawChart(history) {
         y: {
           beginAtZero: false,
           ticks: {
-            callback: (value) => `€${value.toFixed(2)}`,
+            callback: (value) => `${sym}${value.toFixed(2)}`,
           },
         },
       },
@@ -221,8 +253,11 @@ document.getElementById("addPriceForm").addEventListener("submit", async (e) => 
   const name = document.getElementById("productName").value.trim();
   const barcode = document.getElementById("productBarcode").value.trim() || null;
   const category = document.getElementById("productCategory").value || null;
+  const originCountry = document.getElementById("originCountry").value || null;
   const storeName = document.getElementById("storeName").value.trim();
+  const storeCountry = document.getElementById("storeCountry").value || null;
   const price = parseFloat(document.getElementById("productPrice").value);
+  const currency = document.getElementById("priceCurrency").value;
   const dateStr = document.getElementById("priceDate").value;
 
   const msgEl = document.getElementById("formMessage");
@@ -241,7 +276,7 @@ document.getElementById("addPriceForm").addEventListener("submit", async (e) => 
       const createRes = await fetch(`${API}/products`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, barcode, category }),
+        body: JSON.stringify({ name, barcode, category, origin_country: originCountry }),
       });
       if (!createRes.ok) {
         // Product met barcode bestaat al, zoek het op
@@ -271,7 +306,7 @@ document.getElementById("addPriceForm").addEventListener("submit", async (e) => 
         const storeRes = await fetch(`${API}/stores`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: storeName }),
+          body: JSON.stringify({ name: storeName, country_code: storeCountry }),
         });
         const store = await storeRes.json();
         storeId = store.id;
@@ -283,6 +318,7 @@ document.getElementById("addPriceForm").addEventListener("submit", async (e) => 
       product_id: product.id,
       store_id: storeId,
       price: price,
+      currency: currency,
       source: "manual",
     };
     if (dateStr) {
@@ -297,7 +333,8 @@ document.getElementById("addPriceForm").addEventListener("submit", async (e) => 
 
     if (!priceRes.ok) throw new Error("Kon prijs niet opslaan");
 
-    msgEl.textContent = `Prijs van €${price.toFixed(2)} opgeslagen voor ${name}!`;
+    const savedSym = currencySymbol(currency);
+    msgEl.textContent = `Prijs van ${savedSym}${price.toFixed(2)} opgeslagen voor ${name}!`;
     msgEl.className = "form-message success";
     msgEl.classList.remove("hidden");
 
@@ -331,17 +368,21 @@ async function loadTopInflation() {
 
   container.innerHTML = data
     .map(
-      (item) => `
+      (item) => {
+        const sym = currencySymbol(item.currency || "EUR");
+        const country = item.country ? ` (${countryName(item.country)})` : "";
+        return `
     <div class="inflation-item" onclick="showPriceHistory(${item.product_id})">
       <div>
-        <span class="name">${item.product_name}</span>
-        <span class="prices">€${item.oldest_price.toFixed(2)} → €${item.current_price.toFixed(2)}</span>
+        <span class="name">${item.product_name}${country}</span>
+        <span class="prices">${sym}${item.oldest_price.toFixed(2)} → ${sym}${item.current_price.toFixed(2)}</span>
       </div>
       <span class="change-badge ${item.change_percent < 0 ? "deflation" : ""}">
         ${item.change_percent > 0 ? "+" : ""}${item.change_percent}%
       </span>
     </div>
-  `
+  `;
+      }
     )
     .join("");
 }
